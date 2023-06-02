@@ -6,72 +6,67 @@ import telegram
 import datetime
 import BaseDeDatos.Conexion_BD as Bd
 
+bot = telegram.Bot(token=config.TELEGRAM_BOT_TOKEN)
 
-bot_token = config.bot_token_telegram
-chat_id = config.chat_id_telegram
-bot = telegram.Bot(token=bot_token)
-
-dashboard_name = config.dashboard_meraki
 #executor = ThreadPoolExecutor(max_workers=3)
-organization_id= config.id_org 
-datos_db = config.var_empty
-contador = 0
-USER_MERAKI = config.var_empty
-network_id = config.var_empty
-dashboard= config.var_empty
-network_name  = config.var_empty
-url_network= config.var_empty
-error = config.var_empty
-conn = config.var_empty
+connection_mysqldb = config.EMPTY_NAME
+USER_MERAKI = config.EMPTY_NAME
+network_id = config.EMPTY_NAME
+connection_meraki= config.EMPTY_NAME
+error_meraki_script = config.EMPTY_NAME
+conn = config.EMPTY_NAME
 
-def Process_Estado_Device():
+def process_status_device():
     try:
-        response_ex = dashboard.organizations.getOrganizationDevicesStatuses(
-            organization_id, total_pages='all'
+        response_ex = connection_meraki.organizations.getOrganizationDevicesStatuses(
+            config.IDS_ORGANIZATION_MERAKI, total_pages='all'
         )
-            
         for dev2 in range(len(response_ex)):
-            Ingresar_EStado_Dispositivos(response_ex,dev2)
-            
+            save_status_device(response_ex,dev2)
+            #executor.submit(Ingresar_EStado_Dispositivos,response_ex,dev2)
 
     except Exception as ex: 
-        bot.send_message(chat_id,text="Error en el Script Estado Dispositivos\n"+str(ex))
-        error.write("Error al Procesar la peticion "+str(ex)+"\n")
+        #bot.send_message(config.TELEGRAM_CHAT_ID,text="Error en el Script Estado Dispositivos\n"+str(ex))
+        error_meraki_script.write("Error to connect with MERAKI: "+str(ex)+"\n")
 
-def Ingresar_EStado_Dispositivos(response_ex,dev2):
-    serie = str(response_ex[dev2]["serial"])
-    cantidad = datos_db.Verificar_Dispositivo(serie)
-    cantidad_inventario = datos_db.Process_Get_Devices_Count(serie)
-    if cantidad == 0 and cantidad_inventario == 1:
-        estado = (serie,str(response_ex[dev2]["status"]),"MERAKI")
-        datos_db.Insertar_Estado_Dispositivos(estado)
+def save_status_device(response_ex,dev2):
+    device_serial = str(response_ex[dev2]["serial"])
+    total_device_in_database = connection_mysqldb.verify_device_from_serial(device_serial)
+    cantidad_inventario = connection_mysqldb.get_total_devices(device_serial)
+    if total_device_in_database == 0 and cantidad_inventario == 1:
+        status = (device_serial,str(response_ex[dev2]["status"]),"MERAKI")
+        connection_mysqldb.insert_status_devices(status)
     else:
-        datos_db.Actualizar_Estado_Dispositivos(serie,str(response_ex[dev2]["status"]))
+        connection_mysqldb.update_status_devices(device_serial,str(response_ex[dev2]["status"]))
 
-if __name__ == '__main__':
-    error = open(config.merakiStatus_log,"w")
-    datos_db = Bd.ConexionBaseDeDatos()
-    USER_MERAKI = datos_db.Get_Dashboard_token(dashboard_name)
-    dashboard = meraki.DashboardAPI(
-                    USER_MERAKI,
-                    output_log=False,
-	                print_console=False
-                )      
-    error = open(config.merakiDevices_log,"w")
-    while True:
-        try:
-            x = datetime.datetime.now()
-            bot.send_message(chat_id,text="Script MERAKI Estado Dispositivos Iniciado....\n"+str(x.strftime("%c")))
-            print("Script Meraki Estado Devices..."+str(x))
-            Process_Estado_Device()
-        except Exception as ex:
-            #bot.send_message(chat_id,text="Error en el Script MERAKI Estado Dispositivos Iniciado\n"+str(x.strftime("%c")+"\n"+str(ex)))
-            error.write("Error al Principal Estado: "+str(ex)+"\n")
-            dashboard = meraki.DashboardAPI(
+def get_connection_meraki_dashboard():
+    try:
+        meraki_connection = meraki.DashboardAPI(
                     USER_MERAKI,
                     output_log=False,
 	                print_console=False
                 )
+        return meraki_connection
+    except Exception as ex:
+        error_meraki_script.write("Error to connect with MERAKI: "+str(ex)+"\n")
+
+
+if __name__ == '__main__':
+    error_meraki_script = open(config.PATH_FILE_ERROR_STATUS_MERAKI,"w")
+    connection_mysqldb = Bd.MysqlDb()
+    USER_MERAKI = connection_mysqldb.get_dashboard_token_from_dashboard(config.NAME_DASHBOARD_MERAKI)
+    connection_meraki = get_connection_meraki_dashboard()      
+    error_meraki_script = open(config.PATH_FILE_ERROR_MERAKI,"w")
+    while True:
+        try:
+            x = datetime.datetime.now()
+            bot.send_message(config.TELEGRAM_CHAT_ID,text="Script MERAKI Estado Dispositivos Iniciado....\n"+str(x.strftime("%c")))
+            print("Script Meraki Estado Devices..."+str(x))
+            process_status_device()
+        except Exception as ex:
+            #bot.send_message(chat_id,text="Error en el Script MERAKI Estado Dispositivos Iniciado\n"+str(x.strftime("%c")+"\n"+str(ex)))
+            error_meraki_script.write("Error to connect with MERAKI: "+str(ex)+"\n")
+            connection_meraki = get_connection_meraki_dashboard()
             
 
         

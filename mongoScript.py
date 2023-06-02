@@ -4,61 +4,92 @@ class Mongo_Database:
 
     def __init__(self):
         pass
-    def Get_Connection_Object(self):
+    
+    def get_mongodb_connection(self):
         self.client = MongoClient('localhost')
         return self.client.start_session()
-    def Get_Connection(self):
+    
+    def get_mongodb_huawei_data(self):
+        self.client = MongoClient('localhost')
+        self.db =  self.client["dashboard_devices_status"]
+        return self.db['huawei_data']
+    
+    def get_mongodb_devices_status(self):
         self.client = MongoClient('localhost')
         self.db =  self.client["dashboard_devices_status"]
         return self.db['devices_status']
 
-    def Get_Connection_Network(self):
+    def get_mongodb_status_device_temporal(self):
+        self.client = MongoClient('localhost')
+        self.db =  self.client["dashboard_devices_status"]
+        return self.db['devices_status_temp']
+
+    def get_mongodb_network(self):
         self.client = MongoClient('localhost')
         self.db =  self.client["dashboard_devices_status"]
         return self.db['network_devices']
+    
+    def get_mongodb_viptela_Devices(self):
+        self.client = MongoClient('localhost')
+        self.db =  self.client["dashboard_devices_status"]
+        return self.db['devices_sdwan']
+      
+    def get_mongodb_serial_viptela_devices(self):
+        self.client = MongoClient('localhost')
+        self.db =  self.client["dashboard_devices_status"]
+        return self.db['devices_seriales_sdwan']
 
-    def Get_Connection_Devices(self):
+    def get_mongodb_devices(self):
         self.client = MongoClient('localhost')
         self.db =  self.client["dashboard_devices_status"]
         return self.db['devices']
 
-    def Get_Connection_template(self):
+    def get_mongodb_devices_temporal(self):
+        self.client = MongoClient('localhost')
+        self.db =  self.client["dashboard_devices_status"]
+        return self.db['devices_temp']
+
+    def get_mongodb_template(self):
         self.client = MongoClient('localhost')
         self.db =  self.client["dashboard_devices_status"]
         return self.db['template']
 
-    def Get_Connection_network_clients(self):
+    def get_mongodb_network_clients(self):
         self.client = MongoClient('localhost')
         self.db =  self.client["dashboard_devices_status"]
         return self.db['clients_in_networks']
+        
+    def set_mongodb_information_centros_educativos(self):
+        self.client = MongoClient('localhost')
+        self.db =  self.client["dashboard_devices_status"]
+        return self.db['geografiaCE']
 
-    def Get_Count_Devices (self):
-        return self.Get_Connection_Devices().count_documents({})
 
-    def Get_Count_Devices_Status(self):
-        return self.Get_Connection().count_documents({})
+    def get_mongodb_count_devices (self):
+        return self.get_mongodb_devices().count_documents({})
 
-    def Get_Count_Networks(self):
-        return self.Get_Connection_Network().count_documents({})
+    def get_mongodb_count_devices_status(self):
+        return self.get_mongodb_devices_status().count_documents({})
 
-    def Get_Devices_CE(self,codigo):
-        return self.Get_Connection_Devices().find({'name' : {'$regex' : '.*' + codigo + '.*'}})
+    def get_mongodb_count_networks(self):
+        return self.get_mongodb_network().count_documents({})
 
-    def Get_Devices_Serie(self,serie):
-        return self.Get_Connection_Devices().count_documents({'serial' : serie}) #find_one({'serial' : serie}).
-    def Get_Devices_Estado(self,serie):
-        return self.Get_Connection().find_one({'serial_equipo' : serie})
+    def get_mongodb_devices_in_centros_educativos(self,code):
+        return self.get_mongodb_devices().find({'name' : {'$regex' : '.*' + code + '.*'}})
 
-    ###Buscar Nombre de la REd########
-    def Get_Network_CE(self,codigo):
-        return self.Get_Connection_Network().find_one({'tags' : {'$regex' : '.*' + codigo + '.*'}})
+    def get_monfogdb_serial_device(self,serial):
+        return self.get_mongodb_devices().count_documents({'serial' : serial})
+    
+    def get_mongodb_device_status(self,serial):
+        return self.get_mongodb_devices_status().find_one({'serial_equipo' : serial})
+    
+    def get_mongodb_network_name_from_code(self,code):
+        return self.get_mongodb_network().find_one({'tags' : {'$regex' : '.*' + code + '.*'}})
 
-    ###Template
-    def Get_Network_Template(self,id_temp):
-        return self.Get_Connection_template().find_one({'id' : id_temp})
+    def get_mongodb_network_template_from_id(self,id_temp):
+        return self.get_mongodb_template().find_one({'id' : id_temp})
    
     ###
-    def Get_Client_Id_Network(self,id):
-        return self.Get_Connection_network_clients().count_documents({'serial' : id})
-
+    def get_mongodb_clients_from_idnetwork(self,id):
+        return self.get_mongodb_network_clients().count_documents({'serial' : id})
     
