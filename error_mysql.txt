@@ -1,0 +1,12 @@
+Error Process Query MYSQL 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`sistema_fod_cableado`.`cantidadequiposdashboard`, CONSTRAINT `fk_codequipos` FOREIGN KEY (`codigoEquipo`) REFERENCES `modelos` (`codigo_modelo`))
+Error Process Query MYSQL 1062 (23000): Duplicate entry '002' for key 'cantidadequiposdashboard.PRIMARY'
+Error Process Query MYSQL 1062 (23000): Duplicate entry '001' for key 'cantidadequiposdashboard.PRIMARY'
+Error Process Query MYSQL 1062 (23000): Duplicate entry '004' for key 'cantidadequiposdashboard.PRIMARY'
+Error Process Query MYSQL 1062 (23000): Duplicate entry '009' for key 'cantidadequiposdashboard.PRIMARY'
+Error Process Query MYSQL 1062 (23000): Duplicate entry '003' for key 'cantidadequiposdashboard.PRIMARY'
+Error Process Query MYSQL 1062 (23000): Duplicate entry '005' for key 'cantidadequiposdashboard.PRIMARY'
+Error Process Query MYSQL 1062 (23000): Duplicate entry '030' for key 'cantidadequiposdashboard.PRIMARY'
+Error Process Query MYSQL 1062 (23000): Duplicate entry '025' for key 'cantidadequiposdashboard.PRIMARY'
+Error Process Query MYSQL 1062 (23000): Duplicate entry '028' for key 'cantidadequiposdashboard.PRIMARY'
+Error Process Query MYSQL 1062 (23000): Duplicate entry '026' for key 'cantidadequiposdashboard.PRIMARY'
+Error Process Query MYSQL 1062 (23000): Duplicate entry '029' for key 'cantidadequiposdashboard.PRIMARY'

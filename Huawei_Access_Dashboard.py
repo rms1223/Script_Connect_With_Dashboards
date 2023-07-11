@@ -15,10 +15,10 @@ if __name__ == '__main__':
     while True:
         try:
             x = datetime.datetime.now()
-            print("Script Huawei Iniciado..."+str(x))
+            print(f"Script Huawei Iniciado...{str(x)}")
             ProcessHuawei()
             x = datetime.datetime.now()
-            print("Script Huawei Finalizado..."+str(x))
+            print(f"Script Huawei Finalizado...{str(x)}")
             time.sleep(config.PROCESS_WAIT)
         except Exception as ex:
             print(str(ex))

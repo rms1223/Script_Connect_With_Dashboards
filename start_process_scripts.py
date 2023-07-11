@@ -68,7 +68,6 @@ def process_networks_meraki(org_id):
     process_status_devices_meraki_from_organizationid(org_id)
     process_templates_meraki_from_organizationid(org_id)
     __connection_mysql.update_status_query_process("LISTO")
-    #Process_Clients_Devices()
 
 def verify_meraki_template(network):
     return network["configTemplateId"] if "configTemplateId" in network else "No especificado"
@@ -85,7 +84,14 @@ def save_networks_from_meraki(reponse_meraki_network):
                 codigo = str(response_query_meraki[1])
             else:
                 codigo = str(response_query_meraki[0])
-        datos_redes = {"idRed":str(id_network_meraki),"nombre":str(network_name_meraki),"tags":str(response_query_meraki),"url":str(url_network_meraki),"codigo":codigo,"id_template":verify_meraki_template(reponse_meraki_network)}
+        datos_redes = {"idRed":str(id_network_meraki),
+                       "nombre":str(network_name_meraki),
+                       "tags":str(response_query_meraki),
+                       "url":str(url_network_meraki),
+                       "codigo":codigo,
+                       "id_template":verify_meraki_template(reponse_meraki_network)
+                    }
+        
         CONNECTION_MONGODB.get_mongodb_network().insert_one(datos_redes)
         __id_network_codigo[id_network_meraki] = codigo
         __url_network_dic[id_network_meraki] = url_network_meraki
@@ -178,8 +184,8 @@ if __name__ == '__main__':
             process_huawei_dashboard()
             print("ARUBA")
             process_aruba()
-            #print("VIPTELA")
-            #Process_CiscoViptela()
+            print("VIPTELA")
+            init_process_viptela_cisco()
             save_register_in_mongodatabase()
             time_query = datetime.datetime.now()
             print(f"Scripts Finalizado... {str(time_query)}")

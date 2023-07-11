@@ -5,7 +5,8 @@ import mongoScript as mongodb
 import requests as requests
 from requests.packages import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
+import Models.Devices as dev
+import Models.DeviceStatus as status_devices
 
 class ViptelaDevices:
     __conection_mongodb = mongodb.Mongo_Database()
@@ -51,29 +52,20 @@ class ViptelaDevices:
     def process_devices_viptela(self,response_query_to_json):
         for data_in_response in response_query_to_json["data"]:
                 try:
-                    device_viptela_data = {
-                            "serial":str(data_in_response['uuid']),
-                            "name":str(data_in_response['host-name']),
-                            "lanIp":str("10.10.10.1"),
-                            "mac":str(data_in_response['board-serial']),
-                            "model":str(data_in_response['device-model']),
-                            "notes":"",
-                            "tags":[str(data_in_response['site-id']),str(data_in_response['device-groups'])],
-                            "url":"Cisco_VIPTELA"
-                        }
+                    devices_gateways_data = dev.Devices(str(data_in_response['uuid']),str(data_in_response['host-name']),
+                            "10.10.10.1",str(data_in_response['board-serial']),
+                            str(data_in_response['device-model']),"",[str(data_in_response['site-id']),str(data_in_response['device-groups'])],
+                            config.NAME_DASHBOARD_CISCO,config.NAME_DASHBOARD_CISCO
+                        )
                     network_viptela = {
                                     "idRed":str(data_in_response['host-name'])+"|"+str(data_in_response['uuid']),
                                     "nombre":str(data_in_response["site-id"]),
                                     "tags":[str(data_in_response['site-id']),str(data_in_response['device-groups'])],
                                     "url":"Cisco_VIPTELA"}
-                    status_device_viptela = {
-                                "serial":str(data_in_response['uuid']),
-                                "status": self.get_status_sdwan_dashboard(str(data_in_response['reachability'])),
-                                "dashboard":"Cisco_VIPTELA"
-                            }
+                    status_device_viptela = status_devices.DeviceStatus(str(data_in_response['uuid']),self.get_status_sdwan_dashboard(str(data_in_response['reachability'])),config.NAME_DASHBOARD_CISCO)
                     self.__conection_mongodb.get_mongodb_network().insert_one(network_viptela)
-                    self.__conection_mongodb.get_mongodb_devices_temporal().insert_one(device_viptela_data)
-                    self.__conection_mongodb.get_mongodb_status_device_temporal().insert_one(status_device_viptela)
+                    self.__conection_mongodb.get_mongodb_devices_temporal().insert_one(devices_gateways_data.get_format_save_device_data())
+                    self.__conection_mongodb.get_mongodb_status_device_temporal().insert_one(status_device_viptela.get_format_save_device_data())
                 except Exception as ex:
                     print(f"Error {+str(ex)}")
             

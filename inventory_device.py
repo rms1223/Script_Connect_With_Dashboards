@@ -4,29 +4,37 @@ con_mongo = mongodb.Mongo_Database()
 import BaseDeDatos.Conexion_BD as Bd
 datos_db = Bd.MysqlDb()
 
-d={}
-codigos_modelos ={}
+class InventoryDevices:
 
-data = con_mongo.get_mongodb_devices().find({})
-data_tem = datos_db.get_codes_models()
+    def __init__(self) -> None:
+        self.data_dict={}
+        self.code_models ={}
+        self.data = con_mongo.get_mongodb_devices().find({})
+        self.data_tem = datos_db.get_codes_models()
 
-for i in data_tem:
-    codigos_modelos[i[1]] = i[0]
-    
-for data2 in data:
-    #print(str(data2['model'])+"  --------   "+str(data2['name'])+"  --------   "+str(data2['url']))
-    val = codigos_modelos.get(data2['model'])
-    if val not in d.keys():
-        d[val] = 1
-    else:
-        val_temp = d[val]
-        d[val] = val_temp + 1
+    def list_code_models(self):
+        for code_model in self.data_tem:
+            self.code_models[code_model[1]] = code_model[0]
 
-for registros in d:
-    datos_db.insert_total_devices_in_dasboards((registros,d[registros]))
-    print(str(registros)+" ------- "+str(d[registros]))
+    def list_devices_models_from_database(self):
+        for model_device in self.data:
+            val = self.code_models.get(model_device['model'])
+            if val not in self.data_dict.keys():
+                self.data_dict[val] = 1
+            else:
+                val_temp = self.data_dict[val]
+                self.data_dict[val] = val_temp + 1
 
+    def save_data_inventory_in_database(self):
+        for register in self.data_dict:
+            datos_db.insert_total_devices_in_dasboards((register,self.data_dict[register]))
+            print(f"{str(register)} ------- {str(self.data_dict[register])}")
 
+    def init_process_inventory(self):
+        self.list_code_models()
+        self.list_devices_models_from_database()
+        self.save_data_inventory_in_database()
+        
 
 
 

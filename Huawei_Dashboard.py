@@ -10,7 +10,9 @@ import glob
 from time import sleep, time
 import config
 import mongoScript as mongodb
-import Devices as dev
+import Models.Devices as dev
+import Models.DeviceStatus as status_devices
+import Models.NetworkCartel as network_cartel
 CONNECTION_MONGODB = mongodb.Mongo_Database()
 import BaseDeDatos.Conexion_BD as Bd
 CONNECTION_MYSQL = Bd.MysqlDb()
@@ -53,7 +55,7 @@ class HuaweiDevices:
                             key = os.path.getmtime)
             return list_of_files[len(list_of_files)-1]
         except Exception as e:
-            print(F"Error {str(e)}")
+            print(f"Error {str(e)}")
         
 
 
@@ -71,37 +73,23 @@ class HuaweiDevices:
                     status_device = "offline" if ( status.strip() == "Offline") else "online"
                     ip_Router = "10.10.10.1" if ( name_device == "Gateway") else str(row_file[11]) 
                     devices = dev.Devices(str(row_file[0]).strip(),str(row_file[1]).strip(),ip_Router.strip(),str(row_file[12]).strip(),str(row_file[8]).strip(),str(row_file[4]).strip(),str(row_file[17]).strip(),str(row_file[15]).strip(),str(row_file[17]).strip())
-                    device_huawei_data = {
-                            "serial":str(devices.get_serial_device()[0]),
-                            "name":str(devices.get_name_device()[0]),
-                            "lanIp":str(devices.get_lanip_device()[0]),
-                            "mac":str(devices.get_macaddress_device()[0]),
-                            "model":str(devices.get_model_device()[0]),
-                            "notes":str(devices.get_notes_device()[0]),
-                            "tags":devices.get_tags_device()[0],
-                            "url": str(devices.get_path_device()[0])
-                        }
-                    status_device_huawei = {
-                                "serial":str(devices.get_serial_device()[0]),
-                                "status":status_device,
-                                "dashboard":str(row_file[17]).strip()
-                            }
-                    network_huawei = {
-                                    "idRed":str(devices.get_name_device()[0])+"|"+str(devices.get_serial_device()[0]),
-                                    "nombre":str(devices.get_name_device()[0]),
-                                    "tags":str(devices.get_notes_device()[0])+" "+str(devices.get_path_device()[0]),
-                                    "url":str(devices.get_path_device()[0])
-                                }
+                    device_huawei_data = devices.get_format_save_device_data()
+
+                    status_data = status_devices.DeviceStatus(str(devices.get_serial_device()[0]),status_device,str(row_file[17]).strip())
+                    status_device_huawei = status_data.get_format_save_device_data()
+                    network_cartel_format = network_cartel.NetworkCartel(str(devices.get_serial_device()[0]),str(devices.get_notes_device()[0]),str(devices.get_path_device()[0]))
+                    network_cartel_format.set_network_name(str(devices.get_name_device()[0]))
+                    network_cartel_format.set_network_group_name(str(devices.get_name_device()[0]))
                     if is_first_iteraction:
                         is_first_iteraction = False
                         pass
                     else:
                         data_device_huawei.append(device_huawei_data)
                     status_device_array.append(status_device_huawei)
-                    CONNECTION_MONGODB.get_mongodb_network().insert_one(network_huawei)
+                    CONNECTION_MONGODB.get_mongodb_network().insert_one(network_cartel_format.get_format_save_device_data())
 
             print(str(len(data_device_huawei)))
-            print("Total de datos en BD Huawei "+str(CONNECTION_MYSQL.verify_total_devices_in_dashboards("Huawei",len(data_device_huawei))))
+            print("Total de datos en BD Huawei "+str(CONNECTION_MYSQL.verify_total_devices_in_dashboards(config.NAME_DASHBOARD_HUAWEI,len(data_device_huawei))))
             CONNECTION_MONGODB.get_mongodb_devices_temporal().insert_many(data_device_huawei)
             sleep(5)
             CONNECTION_MONGODB.get_mongodb_status_device_temporal().insert_many(status_device_array)

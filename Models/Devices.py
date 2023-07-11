@@ -26,3 +26,18 @@ class Devices:
         return self.__tagsDevice
     def get_path_device(self):
         return self.__urlDevices
+    def get_format_save_device_data(self):
+        return {
+                "serial":self.__serialDevice,
+                "name":self.__namedevice,
+                "lanIp":self.__lanIpDevice,
+                "mac":self.__macDevice,
+                "model":self.__modelDevice,
+                "notes":self.__notesDevice,
+                "tags":[self.__urlDevices, self.__tagsDevice],
+                "url": self.__urlDevices
+            }
+            
+        
+    
+        
