@@ -175,19 +175,19 @@ if __name__ == '__main__':
             log_main_script.write(f"Init Main Script {time_query}")
             print(f"Scripts Iniciado... {str(time_query)}")
             delete_register_from_mongodb()
-            '''print("MERAKI")
+            print("MERAKI")
             for id_organization in config.IDS_ORGANIZATION_MERAKI:
                 process_networks_meraki(id_organization)
             print("Total de datos en BD "+str(__connection_mysql.verify_total_devices_in_dashboards("Meraki",__total_devices_in_meraki)))
-            print(f"Total Meraki {str(__total_devices_in_meraki)}")'''
+            print(f"Total Meraki {str(__total_devices_in_meraki)}")
             print("HUAWEI")
             process_huawei_dashboard()
-            '''print("ARUBA")
+            print("ARUBA")
             process_aruba()
             print("VIPTELA")
             init_process_viptela_cisco()
             save_register_in_mongodatabase()
-            time_query = datetime.datetime.now()'''
+            time_query = datetime.datetime.now()
             print(f"Scripts Finalizado... {str(time_query)}")
             log_main_script.write(f"Init Finish Script {time_query} \n")
             time.sleep(config.PROCESS_WAIT)
