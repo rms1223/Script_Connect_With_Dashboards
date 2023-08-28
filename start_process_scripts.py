@@ -14,13 +14,13 @@ import BaseDeDatos.Conexion_BD as Bd
 bot_token = config.TELEGRAM_BOT_TOKEN
 chat_id = config.TELEGRAM_CHAT_ID
 bot = telegram.Bot(token=bot_token)
-error_mongo_db = open(config.PATH_FILE_ERROR_MONGODB,"w")
-error_meraki_script = open(config.PATH_FILE_ERROR_MERAKI,"w")
+error_mongo_db = open(config.PATH_LOG_ERROR_MONGODB,"w")
+error_meraki_script = open(config.PATH_LOG_ERROR_MERAKI,"w")
 #------------------------------------------Variables del Sistema----------------------------------------------------#
 contador = 0
 USER_MERAKI = config.EMPTY_NAME
 network_id = config.EMPTY_NAME
-error_meraki_dashboard = config.EMPTY_NAME
+log_main_script = config.EMPTY_NAME
 conn = config.EMPTY_NAME
 codigo= config.EMPTY_NAME
 meraki_dashboard_connection = config.EMPTY_NAME
@@ -161,37 +161,40 @@ def get_connection_meraki_dashboard():
                 )
         return meraki_connection
     except Exception as ex:
-        print(f"Error to conect with MERAKI DASHBOARD {ex}")
+        log_main_script.write(f"Error Main Script Meraki {ex} {datetime.datetime.now()}\n")
 
 if __name__ == '__main__':
     __connection_mysql = Bd.MysqlDb()
     USER_MERAKI = __connection_mysql.get_dashboard_token_from_dashboard(config.NAME_DASHBOARD_MERAKI)
     meraki_dashboard_connection = get_connection_meraki_dashboard()
-    error_meraki_dashboard = open(config.PATH_FILE_ERROR_MERAKI,"w")
+    log_main_script = open(config.PATH_LOG_ERROR_MERAKI,"a")
     while True:
         try:
             __total_devices_in_meraki =0
             time_query = datetime.datetime.now()
+            log_main_script.write(f"Init Main Script {time_query}")
             print(f"Scripts Iniciado... {str(time_query)}")
             delete_register_from_mongodb()
-            print("MERAKI")
+            '''print("MERAKI")
             for id_organization in config.IDS_ORGANIZATION_MERAKI:
                 process_networks_meraki(id_organization)
-            
             print("Total de datos en BD "+str(__connection_mysql.verify_total_devices_in_dashboards("Meraki",__total_devices_in_meraki)))
-            print(f"Total Meraki {str(__total_devices_in_meraki)}")
+            print(f"Total Meraki {str(__total_devices_in_meraki)}")'''
             print("HUAWEI")
             process_huawei_dashboard()
-            print("ARUBA")
+            '''print("ARUBA")
             process_aruba()
             print("VIPTELA")
             init_process_viptela_cisco()
             save_register_in_mongodatabase()
-            time_query = datetime.datetime.now()
+            time_query = datetime.datetime.now()'''
             print(f"Scripts Finalizado... {str(time_query)}")
+            log_main_script.write(f"Init Finish Script {time_query} \n")
             time.sleep(config.PROCESS_WAIT)
         except Exception as meraki_script_error:
-            error_meraki_script.write("Error Process Query MongoDB "+str(meraki_script_error)+"\n")
+            log_main_script.write(f"Error Main Script Meraki {meraki_script_error} {time_query}\n")
             meraki_dashboard_connection = get_connection_meraki_dashboard()
             time.sleep(config.PROCESS_WAIT)
+        finally:
+            log_main_script.close()
         

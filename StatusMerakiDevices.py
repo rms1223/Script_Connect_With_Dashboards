@@ -52,11 +52,11 @@ def get_connection_meraki_dashboard():
 
 
 if __name__ == '__main__':
-    error_meraki_script = open(config.PATH_FILE_ERROR_STATUS_MERAKI,"w")
+    error_meraki_script = open(config.PATH_LOG_ERROR_STATUS_MERAKI,"w")
     connection_mysqldb = Bd.MysqlDb()
     USER_MERAKI = connection_mysqldb.get_dashboard_token_from_dashboard(config.NAME_DASHBOARD_MERAKI)
     connection_meraki = get_connection_meraki_dashboard()      
-    error_meraki_script = open(config.PATH_FILE_ERROR_MERAKI,"w")
+    error_meraki_script = open(config.PATH_LOG_ERROR_MERAKI,"w")
     while True:
         try:
             x = datetime.datetime.now()

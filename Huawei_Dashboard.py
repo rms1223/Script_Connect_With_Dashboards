@@ -77,9 +77,10 @@ class HuaweiDevices:
 
                     status_data = status_devices.DeviceStatus(str(devices.get_serial_device()[0]),status_device,str(row_file[17]).strip())
                     status_device_huawei = status_data.get_format_save_device_data()
-                    network_cartel_format = network_cartel.NetworkCartel(str(devices.get_serial_device()[0]),str(devices.get_notes_device()[0]),str(devices.get_path_device()[0]))
-                    network_cartel_format.set_network_name(str(devices.get_name_device()[0]))
-                    network_cartel_format.set_network_group_name(str(devices.get_name_device()[0]))
+                    network_cartel_format = network_cartel.NetworkCartel(devices.get_serial_device(),devices.get_notes_device(),devices.get_path_device())
+                    network_cartel_format.set_network_name(devices.get_name_device())
+                    network_cartel_format.set_network_group_name(devices.get_name_device())
+                    network_cartel_format.set_network_site_name(devices.get_serial_device())
                     if is_first_iteraction:
                         is_first_iteraction = False
                         pass

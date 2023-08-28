@@ -85,7 +85,7 @@ if __name__ == '__main__':
 	                print_console=False
                 )
     
-    error = open(config.PATH_FILE_ERROR_MERAKI,"w")
+    error = open(config.PATH_LOG_ERROR_MERAKI,"w")
     while True:
         try:
             x = datetime.datetime.now()

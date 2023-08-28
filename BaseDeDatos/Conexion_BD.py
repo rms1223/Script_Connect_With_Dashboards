@@ -4,7 +4,7 @@ from mysql.connector import (connection, Error)
 
 class MysqlDb:
     def __init__(self):
-        self.error_mysql_db = open(config.PATH_FILE_ERROR_MYSQLDB,"w")
+        self.error_mysql_db = open(config.PATH_LOG_ERROR_MYSQLDB,"w")
     
     def connect_to_mysql(self):
         try:

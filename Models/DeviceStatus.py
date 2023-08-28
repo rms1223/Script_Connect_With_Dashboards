@@ -11,7 +11,7 @@ class DeviceStatus:
     def get_dashboard_device(self):
         return self.__dashboard
     def get_format_save_device_data(self):
-        return { "serial": self.__serial,
-                "status": self.__status,
+        return { "serial": self.__serial[0],
+                "status": self.__status[0],
                 "dashboard": self.__dashboard
             }

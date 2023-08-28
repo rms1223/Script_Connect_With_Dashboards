@@ -75,7 +75,7 @@ def Procesar_Peticion_Aruba():
 
 
 if __name__ == '__main__':
-    error = open(config.PATH_FILE_ERROR_ARUBA,"w")
+    error = open(config.PATH_LOG_ERROR_ARUBA,"w")
     datos_db = Bd.MysqlDb()
     USER_REFRESH_TOKEN_ARUBA = datos_db.get_dashboard_refreshtoken_from_dashboard(dashboard)
     USER_ARUBA = datos_db.get_dashboard_token_from_dashboard(dashboard)

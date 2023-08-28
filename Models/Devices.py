@@ -7,13 +7,13 @@ class Devices:
         self.__macDevice = mac,
         self.__modelDevice = model,
         self.__notesDevice = notes,
-        self.__tagsDevice =  [tags,url],
+        self.__tagsDevice =  [str(tags),str(url)],
         self.__urlDevices = manufacture,
     
     def get_serial_device(self):
         return self.__serialDevice
     def get_name_device(self):
-        return self.__namedevice
+        return self.__namedevice[0]
     def get_lanip_device(self):
         return self.__lanIpDevice
     def get_macaddress_device(self):
@@ -21,21 +21,21 @@ class Devices:
     def get_model_device(self):
         return self.__modelDevice
     def get_notes_device(self):
-        return self.__notesDevice
+        return self.__notesDevice[0]
     def get_tags_device(self):
         return self.__tagsDevice
     def get_path_device(self):
-        return self.__urlDevices
+        return self.__urlDevices[0]
     def get_format_save_device_data(self):
         return {
-                "serial":self.__serialDevice,
-                "name":self.__namedevice,
-                "lanIp":self.__lanIpDevice,
-                "mac":self.__macDevice,
-                "model":self.__modelDevice,
-                "notes":self.__notesDevice,
-                "tags":[self.__urlDevices, self.__tagsDevice],
-                "url": self.__urlDevices
+                "serial":self.__serialDevice[0],
+                "name":self.__namedevice[0],
+                "lanIp":self.__lanIpDevice[0],
+                "mac":self.__macDevice[0],
+                "model":self.__modelDevice[0],
+                "notes":self.__notesDevice[0],
+                "tags":self.__tagsDevice[0],
+                "url": self.__urlDevices[0]
             }
             
         
